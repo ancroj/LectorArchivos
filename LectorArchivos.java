@@ -11,7 +11,6 @@ public class LectorArchivos {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Ingrese el nombre del archivo a leer (por defecto: poema.txt): ");
         String direccionArchivo = scanner.nextLine();
-        System.out.println("---------------------- ");
         String[] palabras = null;
         int opcion = 0;
 
@@ -23,7 +22,8 @@ public class LectorArchivos {
         }
 
         do {
-            System.out.println("Ingresa una opción del menú: \n1. Consultar el vector por índices.\n2. Consultar el vector por palabras.");
+            System.out.println("---------------------- ");
+            System.out.println("Ingresa una opción del menú: \n1. Consultar el vector por índices.\n2. Consultar el vector por palabras.\n0. Salir");
             opcion = Integer.parseInt(scanner.nextLine());
 
             switch (opcion) {
@@ -40,6 +40,13 @@ public class LectorArchivos {
                     break;
             
                 case 2:
+                    try {
+                        consultarPalabra(palabras, scanner);
+                    } catch (PalabraNoEncontradaException e) {
+                        System.out.println("La palabra no se encontró: " + e.getMessage());
+                    } catch (Exception e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
                     break;
 
                 case 0:
@@ -98,8 +105,21 @@ public class LectorArchivos {
         }
     }
 
-    public static void consultarPalabra(String[] palabras, Scanner scanner) {
+    public static void consultarPalabra(String[] palabras, Scanner scanner) throws PalabraNoEncontradaException {
+        System.out.println("Ingrese la palabra que desea buscar:");
+        String buscada = scanner.nextLine().trim();
+        boolean encontrada = false;
 
+        for (int i = 0; i < palabras.length; i++) {
+            if (palabras[i].equalsIgnoreCase(buscada)) {
+                System.out.println("Palabra " + buscada + " encontrada en el índice " + i);
+                encontrada = true;
+            }
+        }
+
+        if (!encontrada) {
+            throw new PalabraNoEncontradaException("La palabra no fue encontrada");
+        }
     }
 }
 
