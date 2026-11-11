@@ -6,27 +6,32 @@ import java.io.IOException;
 
 public class LectorArchivos {
 
+    // Ejecucion principal del programa
     public static void main(String[] args) throws ErrorCargaPoemaException, PosicionPoemaInvalidaException {
         
+        // Se le da al usuario el poder elegir el nombre del archivo
         Scanner scanner = new Scanner(System.in);
         System.out.println("Ingrese el nombre del archivo a leer (por defecto: poema.txt): ");
         String direccionArchivo = scanner.nextLine();
         String[] palabras = null;
         int opcion = 0;
 
+        // Aquí se obtiene la cantidad de palabras en el archivo y se llena el vector
         try {
             int contadorPalabras = obtenerContadorPalabras(direccionArchivo);
             palabras = obtenerPalabras(direccionArchivo, contadorPalabras);
-        } catch (IOException e) {
+        } catch (IOException e) { // Si no existe el archivo se da la excepción
             throw new ErrorCargaPoemaException("Error al cargar el archivo: " + e.getMessage());
         }
 
+        // Bucle para el menú
         do {
             System.out.println("---------------------- ");
             System.out.println("Ingresa una opción del menú: \n1. Consultar el vector por índices.\n2. Consultar el vector por palabras.\n0. Salir");
             opcion = Integer.parseInt(scanner.nextLine());
 
             switch (opcion) {
+                // En caso de elegir 1 el usuario puede consultar que palabra hay en este indice y se manejan las posibles excepciones
                 case 1:
                     try {
                         consultarIndices(palabras, scanner);
@@ -39,6 +44,7 @@ public class LectorArchivos {
                     }
                     break;
             
+                // En case de elegir 2 el usuario puede consultar si la palabra existe y se maneja la excepción
                 case 2:
                     try {
                         consultarPalabra(palabras, scanner);
@@ -49,6 +55,7 @@ public class LectorArchivos {
                     }
                     break;
 
+                // Para salir del menú y para validar la opción elegida
                 case 0:
                     break;
 
@@ -58,6 +65,7 @@ public class LectorArchivos {
         } while (opcion != 0);
     }
 
+    // Método para contar palabras, cuenta cada linea y las agrega al contador global
     public static int obtenerContadorPalabras(String direccionArchivo) throws IOException {
         
         int contadorPalabras = 0;
@@ -73,7 +81,8 @@ public class LectorArchivos {
 
         return contadorPalabras;
     }
-
+    
+    // Metodo para obtener las palabras en un vector fijo con la cantidad de palabras existentes
     public static String[] obtenerPalabras(String direccionArchivo, int cantidadPalabras) throws IOException {
 
         String[] palabras = new String[cantidadPalabras];
@@ -85,6 +94,7 @@ public class LectorArchivos {
             while ((linea = br.readLine()) != null) {
                 String[] palabrasLinea = linea.split(" ");
                 for (String palabra : palabrasLinea) {
+                    // Se recorre cada palabra y se le quitan los puntos y comas antes de agregarla al vector de palabras
                     palabra = palabra.replace(".", "");
                     palabra = palabra.replace(",", "");
                     palabras[index++] = palabra;
@@ -95,16 +105,19 @@ public class LectorArchivos {
         return palabras;
     }
 
+    // Metodo para consultar la palabra en un indice dado
     public static void consultarIndices(String[] palabras, Scanner scanner) throws PalabraMuyCortaException {
         System.out.println("Ingrese el indice de una palabra a consultar: ");
         int indice = Integer.parseInt(scanner.nextLine());
         System.out.println("La palabra en el indice " + indice + " es: " + palabras[indice]);
 
+        // Si la palabra elegida es menor a 4 letras se da esta excepción
         if (palabras[indice].length() < 4) {
             throw new PalabraMuyCortaException("La palabra escogida es menor de 4 letras");
         }
     }
 
+    // Metodo para consultar si una palabra existe en el vector
     public static void consultarPalabra(String[] palabras, Scanner scanner) throws PalabraNoEncontradaException {
         System.out.println("Ingrese la palabra que desea buscar:");
         String buscada = scanner.nextLine().trim();
@@ -117,12 +130,14 @@ public class LectorArchivos {
             }
         }
 
+        // Si la palabra no está se da esta excepción
         if (!encontrada) {
             throw new PalabraNoEncontradaException("La palabra no fue encontrada");
         }
     }
 }
 
+// Clases de error
 class ErrorCargaPoemaException extends Exception {
     public ErrorCargaPoemaException(String message) {
         super(message);
