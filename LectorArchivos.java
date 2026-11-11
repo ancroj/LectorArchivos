@@ -63,6 +63,10 @@ public class LectorArchivos {
             }
         }
 
+        for (String palabra : palabras) {
+            System.out.println(palabra);
+        }
+
         return palabras;
     }
 
